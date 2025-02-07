@@ -1,11 +1,17 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { getAllUsers } from "../services/axiosService";
 import axios from 'axios';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const HomePage = () => {
     const [users, setUsers] = useState([]);
     const [nextPage, setNextPage] = useState(null);
     const [films, setFilms] = useState({});
+
+    const navigate = useNavigate(); 
+    const location = useLocation();
+    const isFirstRender = useRef(location.state?.isFirstRender ?? true);
+
 
     useEffect(() => {
         const fetchFilms = async () => {
@@ -24,8 +30,11 @@ const HomePage = () => {
             }
         };
 
-        fetchFilms();
-    }, []);
+        if (!location.state || !location.state.films) {
+            fetchFilms();
+        } 
+    }, [location.state]);
+
 
 
     const fetchUsers = async (page) => {
@@ -54,9 +63,23 @@ const HomePage = () => {
     };
 
     useEffect(() => {
-        if (Object.keys(films).length === 0) return;
+        if ((Object.keys(films).length === 0) || location.state) return;
         fetchUsers();
     }, [films]);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false; // Marcar como renderizado inicial
+            return;
+        }
+        if (location.state && location.state.users) {
+            setUsers(location.state.users);
+            setNextPage(location.state.nextPage);
+            setFilms(location.state.films);
+        } else {
+            fetchUsers();
+        }
+    }, [location.state]);
 
 
     return (
@@ -64,7 +87,7 @@ const HomePage = () => {
             <h1>Star Wars Characters</h1>
             <div className="card-container">
                 {users.map((user, index) => (
-                    <div className="card" key={index}>
+                    <div className="card" key={index} onClick={() => navigate(`/detail/${user.name}`, { state: { user, users, nextPage, films, isFirstRender: isFirstRender.current } })}>
                         <h2>{user.name}</h2>
                         <h4>Height: {user.height}</h4>
                         <h4>Gender: {user.gender}</h4>

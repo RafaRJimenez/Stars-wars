@@ -1,5 +1,104 @@
 .App {
   text-align: center;
+  font-family: 'Arial', sans-serif;
+  background-color: #f0f2f5;
+  padding: 20px;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #1e1e2f;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.App-link {
+  color: #61dafb;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.App-link:hover {
+  color: #21a1f1;
+}
+
+.card-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+}
+
+.card {
+  background-color: #2e3b4e; /* Fondo más oscuro */
+  color: #ffffff; /* Texto blanco */
+  border: 1px solid #444c56;
+  border-radius: 10px;
+  margin: 10px;
+  padding: 20px;
+  width: 300px;
+  text-align: left;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+}
+
+.card h2 {
+  font-size: 1.5em;
+  margin-bottom: 10px;
+  color: #61dafb; /* Color del texto */
+}
+
+.card h4 {
+  font-size: 1.2em;
+  margin: 5px 0;
+  color: #a9b2c3; /* Color del texto */
+}
+
+.card p {
+  font-size: 1em;
+  margin: 5px 0;
+  color: #cdd9e5; /* Color del texto */
+}
+
+button {
+  background-color: #61dafb;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  padding: 10px 20px;
+  font-size: 1em;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+
+button:hover {
+  background-color: #21a1f1;
+}
+
+/* .App {
+  text-align: center;
 }
 
 .App-logo {
@@ -49,4 +148,4 @@
   border: 1px solid white;
   width: 90%;
   margin: 0 auto;
-}
+} */
