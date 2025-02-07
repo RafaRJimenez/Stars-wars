@@ -1,7 +1,11 @@
 import APIRequest from '../utils/config/axios.config';
 
-export const getAllUsers = () => {
-    return APIRequest.get('people/');
+export const getAllUsers = (page) => {
+    if (page === undefined) {
+        return APIRequest.get('people/');
+    } else {
+        return APIRequest.get(`people/?page=${page}`);
+    }
 }
 
 export const getUserById = (id) => {

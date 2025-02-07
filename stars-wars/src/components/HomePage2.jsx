@@ -1,38 +1,63 @@
-
 import React, { useEffect, useState } from "react";
 import { getAllUsers } from "../services/axiosService";
 import axios from 'axios';
 
 const HomePage = () => {
     const [users, setUsers] = useState([]);
+    const [nextPage, setNextPage] = useState(null);
+    const [films, setFilms] = useState({});
 
     useEffect(() => {
-        const fetchData = async () => {
+        const fetchFilms = async () => {
             try {
-                // Fetch films first
                 const filmsResponse = await axios.get('https://swapi.dev/api/films/');
                 const filmsData = filmsResponse.data.results.reduce((acc, film) => {
-                    acc[film.url.match(/\/(\d+)\/$/)[1]] = film.title;
+                    const match = film.url.match(/\/(\d+)\/$/);
+                    if (match) {
+                        acc[match[1]] = film.title;
+                    }
                     return acc;
                 }, {});
-
-                // Fetch users after films are fetched
-                const usersResponse = await getAllUsers();
-                const usersWithFilms = usersResponse.data.results.map(user => {
-                    const userFilms = user.films.map(filmUrl => {
-                        const filmId = filmUrl.match(/\/(\d+)\/$/)[1];
-                        return { id: filmId, title: filmsData[filmId] };
-                    });
-                    return { ...user, films: userFilms };
-                });
-                setUsers(usersWithFilms);
+                setFilms(filmsData);
             } catch (error) {
-                console.error("Error fetching data:", error);
+                console.error("Error fetching films:", error);
             }
         };
 
-        fetchData();
+        fetchFilms();
     }, []);
+
+
+    const fetchUsers = async (page) => {
+        try {
+            const usersResponse = await getAllUsers(page);
+            const usersWithFilms = usersResponse.data.results.map(user => {
+                const userFilms = user.films.map(filmUrl => {
+                    const match = filmUrl.match(/\/(\d+)\/$/);
+                    if (match) {
+                        const filmId = match[1];
+                        return { id: filmId, title: films[filmId] };
+                    }
+                    return null;
+                }).filter(film => film !== null);
+                return { ...user, films: userFilms };
+            });
+            setUsers(prevUsers => [...prevUsers, ...usersWithFilms]);
+            if (usersResponse.data.next) {
+                setNextPage(usersResponse.data.next.match(/page=(\d+)/)[1]);
+            } else {
+                setNextPage(null);
+            }
+        } catch (error) {
+            console.error("Error fetching users:", error);
+        }
+    };
+
+    useEffect(() => {
+        if (Object.keys(films).length === 0) return;
+        fetchUsers();
+    }, [films]);
+
 
     return (
         <div>
@@ -54,12 +79,14 @@ const HomePage = () => {
                     </div>
                 ))}
             </div>
+            <div>
+                {nextPage && <button onClick={ () => fetchUsers(nextPage)}>Load more page {nextPage}</button>}
+            </div>
         </div>
     );
 };
 
 export default HomePage;
-
 
 
 
